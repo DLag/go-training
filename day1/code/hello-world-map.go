@@ -14,6 +14,6 @@ func main() {
 		"De": "Hallo welt!",
 	}
 	v, _ := j.Marshal(vocabulary)
-	fmt.Print(string(v))
+	fmt.Println(string(v))
 	println(vocabulary["Ua"])
 }

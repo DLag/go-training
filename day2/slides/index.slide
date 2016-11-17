@@ -1,0 +1,271 @@
+Pointers, functions, error handling, panic and recovery
+Day 2
+
+Dmytro Lahoza
+SoftServe
+dlah@softserveinc.com
+@dlagoza
+
+
+* Pointers
+
+* Basics
+
+Passing by _reference_ means the called functions' parameter will be the same as the callers' passed argument
+(not the value, but the identity - the variable itself).
+
+Passing by _value_ means the called functions' parameter will be a copy of the callers' passed argument.
+
+.image ./pass-scheme.gif
+
+* Pointers in Go
+
+Pointer rules:
+
+- A _variable_ is a piece of storage, containing a value.
+- A _pointer_ value is a _address_ of the variable.
+- Not every value has an address, but every variable does.
+- With a pointer we can read or update the value of a variable _indirectly_, without using or even knowing the name of the variable.
+
+Pointer declaration and usage:
+
+    var x = 1
+    p := &x        // p, of type *int, points to x
+    println(*p)    // => 1
+    *p = 2         // same as x = 2
+    println(p)     // => 2
+
+* Pointers in Go
+
+.html ./star-and-amp-mnemonic.html
+
+* New
+
+Another way to get a pointer is to use the built-in _new()_ function:
+
+    func one (xPtr *int) {
+        *xPtr = 1
+    }
+
+    func main () {
+        xPtr := new(int)
+        one(xPtr)
+        fmt.Println(*xPtr) // x is 1
+    }
+
+_new()_ takes a type as an argument, allocates enough memory to fit a value of that type and returns a pointer to it.
+
+
+
+* Functions
+
+* Functions
+
+A function is an independent section of code that maps zero or more input parameters to zero or more output parameters:
+
+.image ./function.png
+
+Go functions schematics:
+
+.image ./function-scheme.png
+
+
+* Functions - multiple values
+
+Go is also capable of returning multiple values from a function:
+
+    func f1() (int, int) {
+        return 5, 6
+    }
+
+You can predefine result value names
+
+    func f2() (a, b int) {
+        a, b = 1, 2
+        return
+    } 
+
+    func main() {
+        x, y := f()
+    }
+
+Multiple values are often used to return an error value along with the result:
+
+    x, err := f()
+
+
+
+* Variadic functions
+
+There is a special form available for the last parameter in a Go function:
+
+    func add(args ...int) int {
+        total := 0
+        for _, v := range args {
+            total += v
+        }
+        return total
+    }
+
+    func main() {
+        fmt.Println(add(1,2,3))
+    }
+
+[...] indicates that function takes zero or more of those parameters.
+They will be passed as slice.
+BTW, this is good way to work with "optional" parameters.
+
+* First-class functions
+
+Specifically, this means the language supports passing functions as arguments to other functions, returning them as the values from other functions, and assigning them to variables or storing them in data structures. (Wikipedia)
+
+    func pow2(v int) int {
+        return v * v
+    }
+
+    func wrap(f func(int) int) func(int)string {
+        return func(v int) string {
+            return strconv.Itoa(f(v))
+        }
+    }
+
+    func main() {
+        strPow2 := wrap(pow2)
+        println(strPow2(10)) // "100" 
+    }
+
+
+* Recursion
+
+Function is able to call itself:
+
+    func factorial(x uint) uint {
+        if x == 0 {
+            return 1
+        }
+        return x * factorial(x-1)
+    }
+
+* Defer, Panic & Recover
+
+* Defer
+
+Go has a special statement called defer which schedules a function call to be run after the function completes:
+
+    func first()  { println("1st") }
+    func second() { println("2nd") }
+
+    func main() {
+        defer second()
+        first()
+    }
+
+defer is often used when resources need to be freed in some way:
+
+    f, _ := os.Open(filename)
+    defer f.Close()
+
+_NB:_ deferred functions are run even if a run-time panic occurs
+
+* Panic and recover
+
+panic() which causes a run-time error:
+
+    func average(xs []float64) float64 {
+        panic("Not Implemented")
+    }
+
+recover() stops this Drama Queen and returns the value that was passed to the call to panic():
+
+    func main() {
+        defer func() {
+            str := recover()
+            println(str)
+        }()
+        panic("AAAAA, we gonna die")
+    }
+
+
+
+
+* Error handling
+
+* Errors
+
+Errors are values (!). Values can be programmed, and since errors are values, errors can be programmed.
+
+The error type is an interface type. An error variable represents any value that can describe itself as a string.
+Error interface's declaration:
+
+    type error interface {
+        Error() string
+    }
+
+Here's how you might use errors.New():
+
+    func Sqrt(f float64) (float64, error) {
+        if f < 0 {
+            return 0, errors.New("math: square root of negative number")
+        }
+        // ... implementation
+    }
+
+* Error handling
+
+In Go, error handling is important.
+Basic example:
+
+    user, err := getUsers()
+    if err != nil {
+        println("something happened")
+    }
+
+or
+
+    if user, err := getUsers(); err != nil {
+        println("something happened")
+    } else {
+        doSomethingWith(user)
+    }
+
+* Simplifying repetitive error handling
+
+.html error-handling-simplification.html
+
+* Methods
+
+* Methods
+
+_Object_ is a value or variable that has method, and a _method_ is a function, associated with a particular type.
+
+Method schematics:
+
+.image ./method-scheme.png
+
+Example method declaration:
+
+    func (rect Rectangle) Area () int {
+        return rect.Height * rect.Width
+    }
+
+* Methods with a pointer receiver
+
+If method needs to update a variable we must pass address of the variable using a pointer.
+
+Same goes if for methods that need to update the receiver variable:
+
+    func (rect *Rectangle) ScaleBy (factor int) {
+        rect.Width  *= factor
+        rect.Height *= factor
+    }
+
+    rect := Rectangle{100, 200}
+    rect.ScaleBy(3) // => 600
+
+
+
+* Live coding: Quick Sort
+
+* Quick Sort
+
+.html ./quick-sort.html

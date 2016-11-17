@@ -6,9 +6,10 @@ import (
 )
 
 type Vocabulary struct {
-	Ua string `json:"ua"`
-	En string
-	De string
+	Ua   string `json:"ua,omitempty"`
+	asdf string
+	En   string
+	De   string
 }
 
 func main() {

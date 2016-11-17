@@ -17,7 +17,7 @@ func (a *IntAdder) Add(v int) {
 }
 
 func (a IntAdder) String() string {
-	return fmt.Sprintf("%d", a)
+	return fmt.Sprintf("%d", int(a))
 }
 
 //END OMIT
@@ -31,12 +31,12 @@ func (a *StructAdder) Add(v int) {
 }
 
 func (a StructAdder) String() string {
-	return fmt.Sprintf("%d", a.value)
+	return fmt.Sprintf("%d", a.value) // ---1---
 }
 
 func addAndPrint(adder Adder, v int) {
 	adder.Add(v)
-	fmt.Println(adder)
+	fmt.Println(adder.String())
 }
 
 func main() {
