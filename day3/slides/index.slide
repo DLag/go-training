@@ -1,0 +1,166 @@
+Pointers, methods and interfaces
+Week 1, day 3
+
+Serhii Herasymov
+SoftServe
+sgeras@softserveinc.com
+
+
+
+
+
+
+
+
+
+
+
+* Interfaces
+
+* Interfaces
+
+Interface rules:
+
+- _Interface_ define behavior that a type must implement (and expose).
+- An _interface_ _type_ is defined as a set of method signatures.
+- A value of interface type can hold any value that implements those methods.
+
+* Interfaces
+
+Interface usage:
+
+    type Shape interface {
+        Area() int          // Rectangle already has this method, so we can operate
+    }                       // with Rectangle as we do with Shape
+
+    func totalAreas(shapes ...Shape) int {
+        var area int
+        for _, s := range shapes {
+            area += s.Area()
+        }
+        return area
+    }
+
+    func main() {
+    	a := Rectangle{100, 200}
+    	b := Rectangle{50,  60}
+    	c := Rectangle{20,  10}
+
+    	println(totalAreas(a, b, c))
+    }
+
+* Sort interface
+
+    type Person struct {
+    	Name string
+    	Age  int
+    }
+
+    type ByAge []Person    // ByAge implements sort.Interface for []Person based on the Age field.
+
+    func (a ByAge) Len() int           { return len(a) }
+    func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+    func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
+
+    func main () {
+        people := []Person{
+            {"Bob",     31},
+            {"John",    42},
+            {"Michael", 17},
+            {"Jenny",   26},
+        }
+
+        sort.Sort(ByAge(people))
+    }
+
+
+
+
+
+* interface{} and type assertion
+
+An interface{} type is a type that could be _any_ _value_ (literally):
+
+    var anything     interface{} = "string"
+    var moreAnything interface{} = 123
+
+So you can create a function that can accept any type, custom or internal.
+
+To use such values you must use a _type_ _assertion_:
+
+    func captainObvious (v interface{}) {
+        switch v := anything.(type) {
+            case string:
+                println("string")
+            case int32, int64:
+                println("integer")
+            case SomeCustomType:
+                println("some-custom-type")
+            default:
+                println("unknown")
+        }
+    }
+
+* Type assertion
+
+_Type_assertion_ is an operation applied to an interface value. It looks like this:
+
+*x.(T)*
+
+where:
+- x - is an expression of an interface type
+- T - is a type, called the "asserted" type
+
+A type assertion checks that the dynamic type of it's operand matches the asserted type.
+
+* Ad-hock polymorphism
+
+Simple example:
+
+    if _, ok := x.(int); ok {
+        //
+    } else if _, ok := x.(uint); ok {
+        //
+    }
+
+But we can do better:
+
+A _switch_ statement simplifies an `if-else` chain that performs a series of value equality tests. An analogous _type_switch_ statement simplifies an `if-else` chain of type assertions:
+
+    switch x.(type) {
+    case nil:        // ...
+    case int, uint:  // ...
+    case bool:       // ...
+    case string:     // ...
+    default:         // ...
+    }
+
+
+* Type conversions (casting)
+
+Type casting allows programmers to change an entity from one data type into another. If you need to take advantage
+of certain characteristics of data type hierarchies, then you have to change entities from one data type into another.
+
+Use *T(v)* for type casting:
+
+    var amount int = 42
+    var amount2 float64 = float64 (amount)
+    var amount3 uint = uint (f)
+
+or more simply:
+
+    amount := 42
+    amount2 := float64(amount)
+    amount3 := uint (f)
+
+* Type conversions (casting)
+
+A non-constant value *x* can be converted to type *T* in any of these cases:
+
+- x is assignable to T.
+- x 's type and T have identical underlying types.
+- x 's type and T are unnamed pointer types and their pointer base types have identical underlying types.
+- x's type and T are both integer or floating point types.
+- x's type and T are both complex types.
+- x is an integer or a slice of bytes or runes and T is a string type.
+- x is a string and T is a slice of bytes or runes.
