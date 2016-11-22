@@ -13,5 +13,4 @@ func main() {
 	for i := 1; i < 10; i++ {
 		do(i)
 	}
-	time.Sleep(22 * time.Second)
 }
