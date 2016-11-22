@@ -47,7 +47,7 @@ func QuickSort(arr []int) []int {
 }
 
 func main() {
-	arr := []int{9, 2, 10, 12, 3, 7, 8, 4, 6, 5, 1}
+	arr := []int{9}
 	fmt.Println("Initial array is:", arr)
 
 	sortedArr, err := QuickSortGuard(arr)
