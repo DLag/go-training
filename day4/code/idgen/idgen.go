@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"./generator"
+	g "./generator"
 )
 
 func main() {
-	chanGenerator := generator.NewChanGenerator()
+	chanGenerator := g.NewChanGenerator()
 	for {
 		fmt.Println(chanGenerator.Generate())
 		time.Sleep(time.Millisecond * 200)
