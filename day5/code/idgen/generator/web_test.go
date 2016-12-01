@@ -2,10 +2,10 @@ package generator
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 )
 
@@ -26,6 +26,7 @@ func testIdGenHandlerFunc(idgen idGenerator, t *testing.T) {
 		var actual idGenResponseGet
 		decoder := json.NewDecoder(resp.Body)
 		err = decoder.Decode(&actual)
+		resp.Body.Close()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -48,15 +49,19 @@ func testIdGenHandlerOtherWayFunc(idgen idGenerator, t *testing.T) {
 		if resp.Code != 200 {
 			t.Fatalf("Received non-200 response: %d\n", resp.Code)
 		}
-		expected := fmt.Sprint(i)
+		expected := "{\"id\":" + strconv.Itoa(i) + "}\n"
 		actual, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if expected != string(actual) {
+		if string(actual) != expected {
 			t.Errorf("Expected the message %q, recieved %q\n", expected, string(actual))
 		}
 	}
+}
+
+func TestIdGenHandlerAtomicOtherWay(t *testing.T) {
+	testIdGenHandlerOtherWayFunc(NewIdGeneratorAtomic(), t)
 }
 
 func TestIdGenHandlerAtomic(t *testing.T) {
