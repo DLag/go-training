@@ -19,7 +19,7 @@ func main() {
 	stmt, err := db.Prepare("INSERT INTO userinfo(username, departname, created) values(?,?,?)")
 	checkErr(err)
 
-	res, err := stmt.Exec("Марья Ивановна", "Бухгатерия", time.Now())
+	res, err := stmt.Exec("Maria Izotopovna", "HR", time.Now())
 	checkErr(err)
 
 	id, err := res.LastInsertId()
@@ -30,7 +30,7 @@ func main() {
 	stmt, err = db.Prepare("update userinfo set username=? where uid=?")
 	checkErr(err)
 
-	res, err = stmt.Exec("astaxieupdate", id)
+	res, err = stmt.Exec("Yurii Potapovich", id)
 	checkErr(err)
 
 	affect, err := res.RowsAffected()
@@ -49,10 +49,7 @@ func main() {
 	for rows.Next() {
 		err = rows.Scan(&uid, &username, &department, &created)
 		checkErr(err)
-		fmt.Println(uid)
-		fmt.Println(username)
-		fmt.Println(department)
-		fmt.Println(created)
+		fmt.Printf("ID: %d, Username: %s, Departament: %s, Created: %v\n", uid, username, department, created)
 	}
 
 	rows.Close() //good habit to close
