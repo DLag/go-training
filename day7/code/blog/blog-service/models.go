@@ -25,7 +25,7 @@ type Comment struct {
 }
 
 func NewModelBlog(dbfile string) *Blog {
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("sqlite3", dbfile)
 	if err != nil {
 		panic("Failed to open database")
 	}

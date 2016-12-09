@@ -1,8 +1,6 @@
 package blogservice
 
-import (
-	"gopkg.in/gin-gonic/gin.v1"
-)
+import "gopkg.in/gin-gonic/gin.v1"
 
 type Service struct {
 	templates    *Templates
@@ -25,5 +23,6 @@ func (s *Service) Run() {
 	r.GET("/", s.indexHandler)
 	r.Static("/css", "./assets/css")
 	r.Static("/js", "./assets/js")
+	r.Static("/fonts", "./assets/fonts")
 	r.Run(s.listen)
 }
