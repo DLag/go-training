@@ -19,8 +19,13 @@ func main() {
 	stmt, err := db.Prepare("INSERT INTO userinfo(username, departname, created) values(?,?,?)")
 	checkErr(err)
 
-	res, err := stmt.Exec("Maria Izotopovna", "HR", time.Now())
+	res, err := stmt.Exec("Maria Izotopovna", "HR", "10.10.2010")
 	checkErr(err)
+	t := time.Now()
+	if time.Now().After(t) {
+
+	}
+	now.AddDate()
 
 	id, err := res.LastInsertId()
 	checkErr(err)
@@ -45,7 +50,6 @@ func main() {
 	var username string
 	var department string
 	var created time.Time
-
 	for rows.Next() {
 		err = rows.Scan(&uid, &username, &department, &created)
 		checkErr(err)
@@ -53,13 +57,12 @@ func main() {
 	}
 
 	rows.Close() //good habit to close
-
 	// delete
 	stmt, err = db.Prepare("delete from userinfo where uid=?")
 	checkErr(err)
 
-	res, err = stmt.Exec(id)
-	checkErr(err)
+	/*res, err = stmt.Exec(id)
+	checkErr(err)*/
 
 	affect, err = res.RowsAffected()
 	checkErr(err)
